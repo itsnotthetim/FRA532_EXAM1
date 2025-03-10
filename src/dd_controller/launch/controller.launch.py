@@ -8,13 +8,13 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    
+
     nav2_bringup_dir = get_package_share_directory('nav2_bringup')
-    my_nav_pkg_dir = get_package_share_directory('fra532_nav')
+    my_nav_pkg_dir = get_package_share_directory('dd_controller')
     
     rviz_config_file = os.path.join(my_nav_pkg_dir, 'rviz', 'navigation.rviz')
-    map_yaml_file = os.path.join(my_nav_pkg_dir, 'maps', 'map.yaml')
-    params_file = os.path.join(my_nav_pkg_dir, 'params', 'basic_params.yaml')
+    map_yaml_file = os.path.join(my_nav_pkg_dir, 'map', 'map.yaml')
+    params_file = os.path.join(my_nav_pkg_dir, 'config', 'params.yaml')
     
     slam = LaunchConfiguration('slam')
     use_sim_time = LaunchConfiguration('use_sim_time')

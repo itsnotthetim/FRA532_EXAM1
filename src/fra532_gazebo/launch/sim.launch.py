@@ -48,7 +48,10 @@ def generate_launch_description():
         executable='spawn_entity.py',
         arguments=['-entity', 'mir_robot',
                 '-topic', 'robot_description',
-                '-b'],  # bond node to gazebo model,
+                '-b',
+                "-x", "-1.0",
+                "-y", "1.0",
+                "-Y", "1.5700039414375448"],  # bond node to gazebo model,
         namespace='',
         output='screen')
 

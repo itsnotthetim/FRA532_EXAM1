@@ -20,6 +20,14 @@ find_package(ament_cmake REQUIRED)		# cpp (optional)
 find_package(rclcpp REQUIRED)			# cpp (optional)
 find_package(ament_cmake_python REQUIRED)   	# python (optional)
 find_package(rclpy REQUIRED)                	# python (optional)
+
+find_package(nav2_core REQUIRED)
+find_package(pluginlib REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(nav2_util REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(nav2_costmap_2d REQUIRED)
 ######################################################
 
 # Install Python Module
@@ -28,6 +36,12 @@ ament_python_install_package(${PROJECT_NAME})
 # Install Python executables
 install(PROGRAMS
   scripts/dummy_script.py
+  scripts/astar_global.py
+  scripts/dwa_local.py
+  scripts/global_costmap_node.py
+  scripts/local_costmap_node.py
+  scripts/pure_pursuit_controller.py
+  scripts/local_planner.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
@@ -39,6 +53,8 @@ include_directories(include)
 add_executable(cpp_node_test src/cpp_node.cpp)
 ament_target_dependencies(cpp_node_test rclcpp)
 
+
+
 # Install Cpp executables
 install(TARGETS
   cpp_node_test
@@ -49,6 +65,7 @@ install(TARGETS
 install(DIRECTORY
   # add directories here
   map
+  config
   launch
   rviz
   DESTINATION share/${PROJECT_NAME})

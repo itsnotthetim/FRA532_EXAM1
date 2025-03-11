@@ -90,6 +90,7 @@ Follow the commands below to download and install the package:
     ```bash
     colcon build
     source install/setup.bash
+    echo "source ~/FRA532_EXAM1/install/setup.bash" >> ~/.bashrc
     ```
 
 ---

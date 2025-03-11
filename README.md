@@ -2,7 +2,7 @@
 
 
 ## Demo
-[![Watch the video](https://raw.githubusercontent.com/yourusername/yourrepository/main/assets/thumbnail.jpg)](https://raw.githubusercontent.com/[itsnotthetim/FRA532_EXAM1/main/video/demo.webm)
+[![Watch the video](https://raw.githubusercontent.com/yourusername/yourrepository/main/assets/thumbnail.jpg)](https://raw.githubusercontent.com/[itsnotthetim/FRA532_EXAM1/main/media/demo.webm)
 ## Introduction
 This is the first examination for **FRA532 Mobile Robotics**, where I have the flexibility to choose my project. My chosen project focuses on developing autonomous navigation for a **differential drive mir_robot** which can avoid the local static obstacle in a warehouse environment.
 

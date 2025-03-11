@@ -1,107 +1,101 @@
 import os
-
-from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration
+from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-
-    nav2_bringup_dir = get_package_share_directory('nav2_bringup')
-    my_nav_pkg_dir = get_package_share_directory('dd_controller')
+    # Define package directories and configuration file paths
+    my_ws_dir = get_package_share_directory('dd_controller')
+    nav2_dir = get_package_share_directory('nav2_bringup')
     
-    rviz_config_file = os.path.join(my_nav_pkg_dir, 'rviz', 'navigation.rviz')
-    map_yaml_file = os.path.join(my_nav_pkg_dir, 'map', 'map.yaml')
-    params_file = os.path.join(my_nav_pkg_dir, 'config', 'params.yaml')
+    my_map_file = os.path.join(my_ws_dir, 'map', 'map.yaml')
+    params_file = os.path.join(my_ws_dir, 'config', 'test.yaml')
+    rviz_config_file = os.path.join(my_ws_dir, 'rviz', 'rviz_cfg.rviz')
     
-    slam = LaunchConfiguration('slam')
-    use_sim_time = LaunchConfiguration('use_sim_time')
-    
-    declare_slam_cmd = DeclareLaunchArgument(
-        'slam',
-        default_value='False',
-        description='Set to "True" to enable SLAM; "False" to use a pre-built map'
-    )
-    
-    declare_use_sim_time_cmd = DeclareLaunchArgument(
-        'use_sim_time',
-        default_value='True',
-        description='Use simulation time if true'
-    )
-    
-    declare_map_yaml_cmd = DeclareLaunchArgument(
-        'map',
-        default_value=map_yaml_file,
-        description='Full path to map file to load'
-    )
-    
-    declare_params_file_cmd = DeclareLaunchArgument(
-        'params_file',
-        default_value=params_file,
-        description='Full path to the ROS2 parameters file to use for all launched nodes'
-    )
-    
-    bringup_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(nav2_bringup_dir, 'launch', 'bringup_launch.py')),
+    # Include the localization launch from nav2
+    nav2_localization_launch_file = os.path.join(nav2_dir, 'launch', 'localization_launch.py')
+    nav2_localization = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(nav2_localization_launch_file),
         launch_arguments={
-            'slam': slam,
-            'map': map_yaml_file,
-            'use_sim_time': use_sim_time,
+            'map': my_map_file,
             'params_file': params_file,
-            'autostart': 'True'
+            'use_sim_time': 'true',
+            'autostart': 'true',
         }.items()
     )
     
-    rviz_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(nav2_bringup_dir, 'launch', 'rviz_launch.py')),
-        launch_arguments={
-            'namespace': '',
-            'use_sim_time': use_sim_time,
-            'rviz_config': rviz_config_file
-        }.items()
+    # RViz for Visualization
+    rviz2_node = Node(
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        output='screen',
+        arguments=['-d', rviz_config_file],
+    )
+
+    # Global Planner (A* Algorithm)
+    global_planner_node = Node(
+        package='dd_controller',
+        executable='astar_global.py',
+        name='global_planner_node',
+        output='screen'
+    )
+
+    # Local Planner (DWA Algorithm) with Parameters
+    local_planner_node = Node(
+        package='dd_controller',
+        executable='sampling_predictive_controller.py',
+        name='local_planner_controller',
+        output='screen',
+        parameters=[{
+            'horizon': 2.5,
+            'dt': 0.1,
+            'num_samples_v': 7,
+            'num_samples_w': 7,
+            'v_max': 0.5,
+            'w_max': 1.0,
+            'obstacle_weight': 15.0,
+            'path_weight': 0.2,
+            'forward_reward': 0.1,
+            'obstacle_threshold': 30,
+            'penalty_factor': 300,
+            'emergency_ttc': 0.5,
+            'clearance_penalty_weight': 2.0,
+            'emergency_stop_distance': 0.2,
+        }]
+    )
+
+    # Global Costmap Node
+    global_costmap_node = Node(
+        package='dd_controller',
+        executable='global_costmap_node.py',
+        name='global_costmap_node',
+        output='screen'
+    )
+
+    # Local Costmap Node
+    local_costmap_node = Node(
+        package='dd_controller',
+        executable='local_costmap_node.py',
+        name='local_costmap_node',
+        output='screen',
+        parameters=[{
+            'inflation_radius': 0.2,
+            'local_size': 6.0,
+            'resolution': 0.05,
+            'publish_rate' : 100.0,
+        }]
     )
     
-    # UNCOMMENT HERE FOR KEEPOUT DEMO
-    start_lifecycle_manager_cmd = Node(
-            package='nav2_lifecycle_manager',
-            executable='lifecycle_manager',
-            name='lifecycle_manager_costmap_filters',
-            output='screen',
-            emulate_tty=True,
-            parameters=[{'use_sim_time': use_sim_time},
-                        {'autostart': True},
-                        {'node_names': ['filter_mask_server', 'costmap_filter_info_server']}])
-
-    start_map_server_cmd = Node(
-            package='nav2_map_server',
-            executable='map_server',
-            name='filter_mask_server',
-            output='screen',
-            emulate_tty=True,
-            parameters=[params_file])
-
-    start_costmap_filter_info_server_cmd = Node(
-            package='nav2_map_server',
-            executable='costmap_filter_info_server',
-            name='costmap_filter_info_server',
-            output='screen',
-            emulate_tty=True,
-            parameters=[params_file])
-    
-    # launch description and add action
+    # Assemble the Launch Description
     ld = LaunchDescription()
-    ld.add_action(declare_slam_cmd)
-    ld.add_action(declare_use_sim_time_cmd)
-    ld.add_action(declare_map_yaml_cmd)
-    ld.add_action(declare_params_file_cmd)
-    ld.add_action(bringup_cmd)
-    ld.add_action(rviz_cmd)
-
-    # UNCOMMENT HERE FOR KEEPOUT DEMO
-    ld.add_action(start_lifecycle_manager_cmd)
-    ld.add_action(start_map_server_cmd)
-    ld.add_action(start_costmap_filter_info_server_cmd)
+    ld.add_action(nav2_localization)
+    ld.add_action(rviz2_node)
+    ld.add_action(global_planner_node)
+    ld.add_action(local_planner_node)
+    ld.add_action(global_costmap_node)
+    ld.add_action(local_costmap_node)
     
     return ld

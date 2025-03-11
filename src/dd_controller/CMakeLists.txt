@@ -37,11 +37,10 @@ ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
   scripts/dummy_script.py
   scripts/astar_global.py
-  scripts/dwa_local.py
+  scripts/sampling_predictive_controller.py
   scripts/global_costmap_node.py
   scripts/local_costmap_node.py
-  scripts/pure_pursuit_controller.py
-  scripts/local_planner.py
+
   DESTINATION lib/${PROJECT_NAME}
 )
 

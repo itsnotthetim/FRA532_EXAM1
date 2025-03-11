@@ -26,9 +26,9 @@ class LocalCostmapNode(Node):
         super().__init__('local_costmap_node')
 
         # --- Declare Parameters ---
-        self.declare_parameter('local_size', 5.0)        # 5x5 meters
+        self.declare_parameter('local_size', 6.0)        # 5x5 meters
         self.declare_parameter('resolution', 0.05)       # meters per cell
-        self.declare_parameter('inflation_radius', 0.3)  # meters
+        self.declare_parameter('inflation_radius', 0.2)  # meters
         self.declare_parameter('costmap_frame_id', 'map')  # Frame for costmap
         self.declare_parameter('scan_topic', '/scan')
         self.declare_parameter('pose_topic', '/amcl_pose')
@@ -57,6 +57,7 @@ class LocalCostmapNode(Node):
 
         # --- QoS Profiles ---
         qos_profile = QoSProfile(depth=10)
+
         qos_scan = QoSProfile(
             reliability=QoSReliabilityPolicy.BEST_EFFORT,
             durability=QoSDurabilityPolicy.VOLATILE,
@@ -145,7 +146,8 @@ class LocalCostmapNode(Node):
         """Convert local grid into `OccupancyGrid` and publish."""
         if self.local_grid is None or self.robot_pose is None:
             return
-
+        
+    
         occ_grid = OccupancyGrid()
         occ_grid.header.stamp = self.get_clock().now().to_msg()
         occ_grid.header.frame_id = self.costmap_frame_id  # Attaches to robot
@@ -168,6 +170,7 @@ class LocalCostmapNode(Node):
 
     def publish_tf_transform(self, x, y, yaw):
         """Broadcast a transform from `map` to `local_costmap`."""
+
         tf_msg = TransformStamped()
         tf_msg.header.stamp = self.get_clock().now().to_msg()
         tf_msg.header.frame_id = "map"
@@ -191,6 +194,7 @@ class LocalCostmapNode(Node):
         """Convert world coordinates to costmap indices."""
         cx = int((wx - rx + self.local_size / 2) / self.resolution)
         cy = int((wy - ry + self.local_size / 2) / self.resolution)
+
         return cx, cy
 
 

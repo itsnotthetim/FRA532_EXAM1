@@ -13,7 +13,7 @@ from scipy.ndimage import binary_dilation
 from rclpy.qos import QoSProfile, QoSReliabilityPolicy, QoSDurabilityPolicy
 
 class Costmap:
-    def __init__(self, yaml_file, robot_radius=0.8, safety_margin=0.1):
+    def __init__(self, yaml_file, robot_radius=0.6, safety_margin=0.1):
         with open(yaml_file, 'r') as file:
             map_data = yaml.safe_load(file)
 
@@ -86,7 +86,7 @@ class CostmapNode(Node):
         yaml_file = self.get_parameter('yaml_file').value
 
         # Initialize costmap 
-        self.costmap = Costmap(yaml_file, robot_radius=0.2, safety_margin=0.2)
+        self.costmap = Costmap(yaml_file, robot_radius=0.1, safety_margin=0.2)
 
         # Define QoS profiles
         qos_profile = QoSProfile(

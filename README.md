@@ -102,12 +102,13 @@ Follow the commands below to download and install the package:
     ```bash
     ros2 launch fra532_gazebo sim.launch.py
     ```
-    1.2 What if you want to collect the map data, Lauch the **fra532_slam** that was provided by Aj.Nook and then use the Xterm interface to move the robot to explore the map(You can skip this because I already do it for you) 
+    1.2 <mark>**What if you want to collect the map data**</mark>, Lauch the **fra532_slam** that was provided by Aj.Nook and then use the Xterm interface to move the robot to explore the map <mark>(You can skip this because I already do it for you)</mark>
+
 
     ```bash
     ros2 launch fra532_slam mapping.launch.py
     ```
-    1.3 For saving the map, Launch the **save_map.launch.py** and then rename both of map file to map.pgm and map.yaml and move them to the **dd_controller/map** path
+    1.3 For saving the map, Launch the **save_map.launch.py** and then rename both of map file to map.pgm and map.yaml and move them to the **dd_controller/map** path <mark>(You can skip this because I already do it for you)</mark>
 
     ```bash
     ros2 launch dd_controller save_map.launch.py

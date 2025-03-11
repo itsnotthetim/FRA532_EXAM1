@@ -1,8 +1,9 @@
 # FRA532_EXAM1: Path Planning and Navigation
 
 
-## Demo
-[![Watch the video](https://raw.githubusercontent.com/itsnotthetim/FRA532_EXAM1/main/images/clickpoint.jpg)](https://raw.githubusercontent.com/[itsnotthetim/FRA532_EXAM1/main/media/demo.webm)
+## Demo (Click on the picture to watch)
+[![Watch the video](https://img.youtube.com/vi/PwrDWScAZx4/maxresdefault.jpg)](https://youtu.be/PwrDWScAZx4)
+
 
 
 ## Introduction

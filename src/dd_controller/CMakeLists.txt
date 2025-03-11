@@ -37,7 +37,7 @@ ament_python_install_package(${PROJECT_NAME})
 install(PROGRAMS
   scripts/dummy_script.py
   scripts/astar_global.py
-  scripts/sampling_predictive_controller.py
+  scripts/sbmpo_controller.py
   scripts/global_costmap_node.py
   scripts/local_costmap_node.py
 

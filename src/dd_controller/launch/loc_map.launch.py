@@ -44,10 +44,10 @@ def generate_launch_description():
     )
 
     # Local Planner (DWA Algorithm) with Parameters
-    local_planner_node = Node(
+    sbmpo_controller_node = Node(
         package='dd_controller',
-        executable='sampling_predictive_controller.py',
-        name='local_planner_controller',
+        executable='sbmpo_controller.py',
+        name='sbmpo_controller',
         output='screen',
         parameters=[{
             'horizon': 2.5,
@@ -61,8 +61,7 @@ def generate_launch_description():
             'forward_reward': 0.1,
             'obstacle_threshold': 30,
             'penalty_factor': 300,
-            'emergency_ttc': 0.5,
-            'clearance_penalty_weight': 2.0,
+            'emergency_ttc': 0.5, 
             'emergency_stop_distance': 0.2,
         }]
     )
@@ -94,8 +93,7 @@ def generate_launch_description():
     ld.add_action(nav2_localization)
     ld.add_action(rviz2_node)
     ld.add_action(global_planner_node)
-    ld.add_action(local_planner_node)
     ld.add_action(global_costmap_node)
     ld.add_action(local_costmap_node)
-    
+    # ld.add_action(sbmpo_controller_node)
     return ld

@@ -89,26 +89,18 @@ class CostmapNode(Node):
         self.costmap = Costmap(yaml_file, robot_radius=0.1, safety_margin=0.2)
 
         # Define QoS profiles
-        qos_profile = QoSProfile(
+        qos_map= QoSProfile(
             reliability=QoSReliabilityPolicy.RELIABLE,
             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
             depth=10)
-        qos_profile1 = QoSProfile(
-            reliability=QoSReliabilityPolicy.BEST_EFFORT,
-            durability=QoSDurabilityPolicy.VOLATILE,
-            depth=10)
+
 
         # Publishers and Subscribers
-        self.costmap_pub = self.create_publisher(OccupancyGrid, '/global_costmap', qos_profile)
-        self.scan_sub = self.create_subscription(LaserScan, '/scan', self.scan_callback, qos_profile=qos_profile1)
+        self.costmap_pub = self.create_publisher(OccupancyGrid, '/global_costmap', qos_map)
         self.pose_sub = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose', self.pose_callback, 10)
 
         # Timer to publish costmap periodically
         self.timer = self.create_timer(1.0, self.publish_costmap)
-
-    def scan_callback(self, msg):
-        # Update costmap with LiDAR data if needed (for dynamic obstacles)
-        pass
 
     def pose_callback(self, msg):
         # Update robot pose

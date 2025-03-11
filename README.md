@@ -1,7 +1,5 @@
 # FRA532_EXAM1
 
-# FRA532 LAB1
-
 <p align="center"><img src="images/introduction/gazebo_purepursuit.gif" alt="Overview .gif" /></p>
 
 <!-- TABLE OF CONTENTS -->
@@ -81,28 +79,10 @@ To use this project. You need to have all of prerequisites for this project.
 > [!WARNING]
 > Make sure you have python version >= 3.6 already.
 
-*   numpy
+*   Install the require python dependencies
 
     ```
-    pip3 install numpy
-    ```
-
-*   matplotlib
-
-    ```
-    pip3 install matplotlib
-    ```
-
-* tf_transformations
-
-    ```
-    pip3 install tf_transformations
-    ```
-
-* pyyaml
-
-    ```
-    pip3 install pyyaml
+    pip install rclpy geometry-msgs nav-msgs sensor-msgs numpy scipy pillow pyyaml tf-transformations ament-index-python
     ```
 
 #### ROS2 packages
@@ -148,10 +128,18 @@ Follow the command below to dowload and install package.
 
     ```
     git clone https://github.com/itsnotthetim/FRA532_LAB1.git
-    cd FRA532_LAB1
+    cd FRA532_EXAM1
     ```
 
-3.  Build & Source the packages
+3. To make sure that you have the required specific package dependencies (MIR_Robbot)
+
+      ```sudo apt update
+    sudo apt install -y python3-rosdep
+    rosdep update --rosdistro=humble
+    rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
+    ```
+
+4.  Build & Source the packages
 
     ```
     colcon build
@@ -167,7 +155,7 @@ Follow the command below to dowload and install package.
 > Before use this project you need to `source ~/FRA532_LAB1/install/setup.bash` and `source /opt/ros/humble/setup.bash` everytime that you open new terminal. If you want to make sure that 2 path has been source everytime when open new terminal you can follow the command below and next time you open new terminal .bashrc will source everything you write on that file.
 
 ```
-echo "source ~/FRA532_LAB1/install/setup.bash" >> ~/.bashrc
+echo "source ~/FRA532_EXAM1/install/setup.bash" >> ~/.bashrc
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```

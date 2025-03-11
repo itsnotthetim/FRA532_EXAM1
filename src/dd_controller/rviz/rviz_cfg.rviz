@@ -7,11 +7,7 @@ Panels:
         - /Global Options1
         - /TF1/Frames1
         - /TF1/Tree1
-        - /LaserScan1
-        - /Map2
-        - /Map2/Topic1
-        - /Path2
-        - /Map3
+        - /Global CostMap1/Topic1
       Splitter Ratio: 0.5833333134651184
     Tree Height: 462
   - Class: rviz_common/Selection
@@ -80,91 +76,13 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        back_laser_link:
-          Value: true
-        base_footprint:
-          Value: true
-        base_link:
-          Value: true
-        bl_caster_rotation_link:
-          Value: true
-        bl_caster_wheel_link:
-          Value: true
-        br_caster_rotation_link:
-          Value: true
-        br_caster_wheel_link:
-          Value: true
-        fl_caster_rotation_link:
-          Value: true
-        fl_caster_wheel_link:
-          Value: true
-        fr_caster_rotation_link:
-          Value: true
-        fr_caster_wheel_link:
-          Value: true
-        front_laser_link:
-          Value: true
-        imu_frame:
-          Value: true
-        imu_link:
-          Value: true
-        left_wheel_link:
-          Value: true
-        map:
-          Value: true
-        odom:
-          Value: true
-        right_wheel_link:
-          Value: true
-        surface:
-          Value: true
-        us_1_frame:
-          Value: true
-        us_2_frame:
-          Value: true
-        virtual_laser_link:
-          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
       Show Axes: true
       Show Names: false
       Tree:
-        map:
-          odom:
-            base_footprint:
-              base_link:
-                back_laser_link:
-                  {}
-                bl_caster_rotation_link:
-                  bl_caster_wheel_link:
-                    {}
-                br_caster_rotation_link:
-                  br_caster_wheel_link:
-                    {}
-                fl_caster_rotation_link:
-                  fl_caster_wheel_link:
-                    {}
-                fr_caster_rotation_link:
-                  fr_caster_wheel_link:
-                    {}
-                front_laser_link:
-                  {}
-                imu_link:
-                  imu_frame:
-                    {}
-                left_wheel_link:
-                  {}
-                right_wheel_link:
-                  {}
-                surface:
-                  {}
-                us_1_frame:
-                  {}
-                us_2_frame:
-                  {}
-                virtual_laser_link:
-                  {}
+        {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -243,7 +161,7 @@ Visualization Manager:
       Color Scheme: map
       Draw Behind: false
       Enabled: true
-      Name: Map
+      Name: Global CostMap
       Topic:
         Depth: 5
         Durability Policy: Transient Local
@@ -269,7 +187,7 @@ Visualization Manager:
       Length: 0.30000001192092896
       Line Style: Lines
       Line Width: 0.029999999329447746
-      Name: Path
+      Name: Global Path
       Offset:
         X: 0
         Y: 0
@@ -292,7 +210,7 @@ Visualization Manager:
       Color: 204; 41; 204
       Enabled: true
       History Length: 1
-      Name: PointStamped
+      Name: Target Position
       Radius: 0.20000000298023224
       Topic:
         Depth: 5
@@ -312,7 +230,7 @@ Visualization Manager:
       Length: 0.30000001192092896
       Line Style: Lines
       Line Width: 0.029999999329447746
-      Name: Path
+      Name: Local Path
       Offset:
         X: 0
         Y: 0
@@ -335,7 +253,7 @@ Visualization Manager:
       Color Scheme: map
       Draw Behind: false
       Enabled: true
-      Name: Map
+      Name: Local CostMap
       Topic:
         Depth: 5
         Durability Policy: Volatile

@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
-from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, PoseStamped, Quaternion
+from geometry_msgs.msg import Twist, PoseWithCovarianceStamped, PoseStamped, Quaternion, Pose
 from nav_msgs.msg import Path, OccupancyGrid
 from rclpy.qos import QoSProfile
 import numpy as np
 import math
 from tf_transformations import euler_from_quaternion
 
-class LocalPlannerControllerNode(Node):
+class SBMPOControllerNode(Node):
     def __init__(self):
-        super().__init__('local_planner_controller')
+        super().__init__('sbmpo_controller')
         qos = QoSProfile(depth=10)
         
         # Declare parameters
@@ -21,7 +21,7 @@ class LocalPlannerControllerNode(Node):
         self.declare_parameter('v_max', 0.5)           # max forward linear speed [m/s]
         self.declare_parameter('w_max', 1.0)           # max angular speed [rad/s]
         self.declare_parameter('obstacle_weight', 15.0)    # penalty weight for obstacle proximity
-        self.declare_parameter('path_weight', 0.2)         # weight for global path deviation (minimal bias)
+        self.declare_parameter('path_weight', 0.05)         # weight for global path deviation (minimal bias)
         self.declare_parameter('forward_reward', 0.1)      # reward for forward progress
         self.declare_parameter('obstacle_threshold', 30)   # cell cost threshold to trigger penalty
         self.declare_parameter('penalty_factor', 300)      # penalty factor for imminent collisions
@@ -56,6 +56,9 @@ class LocalPlannerControllerNode(Node):
         
         # Publisher for velocity commands.
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", qos)
+        
+        # Publisher for local path visualization.
+        self.local_path_pub = self.create_publisher(Path, "/local_path", qos)
         
         # Control loop timer at 10 Hz.
         self.timer = self.create_timer(0.1, self.control_loop)
@@ -107,22 +110,24 @@ class LocalPlannerControllerNode(Node):
         # Normal forward candidate sampling.
         best_cost = float('inf')
         best_control = None
+        best_trajectory = None
         v_candidates = np.linspace(0.0, self.v_max, self.num_samples_v)
         w_candidates = np.linspace(-self.w_max, self.w_max, self.num_samples_w)
         for v in v_candidates:
             for w in w_candidates:
-                cost = self.evaluate_trajectory(v, w)
+                cost, trajectory = self.evaluate_trajectory(v, w)
                 if cost < best_cost:
                     best_cost = cost
                     best_control = (v, w)
+                    best_trajectory = trajectory
         
         if best_control is None:
             self.get_logger().warn("No valid forward trajectory found; attempting reverse mode.")
-            best_control = self.attempt_reverse()
+            best_control, best_trajectory = self.attempt_reverse()
 
         if best_control is None:
             self.get_logger().warn("No valid trajectory found even in reverse; attempting to rotate.")
-            best_control = self.attempt_rotation()
+            best_control, best_trajectory = self.attempt_rotation()
 
         if best_control is not None:
             twist = Twist()
@@ -130,6 +135,10 @@ class LocalPlannerControllerNode(Node):
             twist.angular.z = best_control[1]
             self.cmd_vel_pub.publish(twist)
             self.get_logger().info(f"Chosen control: v={best_control[0]:.2f}, w={best_control[1]:.2f}")
+            
+            # Publish the local path for visualization.
+            if best_trajectory:
+                self.publish_local_path(best_trajectory)
         else:
             self.get_logger().warn("No valid trajectory found; stopping robot.")
             self.cmd_vel_pub.publish(Twist())
@@ -138,45 +147,48 @@ class LocalPlannerControllerNode(Node):
     def attempt_reverse(self):
         best_cost = float('inf')
         best_control = None
+        best_trajectory = None
         v_candidates = np.linspace(-0.3, -0.1, self.num_samples_v)
         w_candidates = np.linspace(-self.w_max, self.w_max, self.num_samples_w)
         for v in v_candidates:
             for w in w_candidates:
-                cost = self.evaluate_trajectory(v, w)
+                cost, trajectory = self.evaluate_trajectory(v, w)
                 if cost < best_cost:
                     best_cost = cost
                     best_control = (v, w)
+                    best_trajectory = trajectory
         if best_control:
             self.get_logger().info(f"Reverse mode selected: v={best_control[0]:.2f}, w={best_control[1]:.2f}")
-        return best_control
+        return best_control, best_trajectory
 
     # -------------------- Rotation Mode --------------------
     def attempt_rotation(self):
         """Attempt to rotate the robot to find a safe direction."""
         # Try rotating to the right first.
-        right_cost = self.evaluate_trajectory(0.0, -self.w_max)  # Negative angular velocity for right turn
-        left_cost = self.evaluate_trajectory(0.0, self.w_max)    # Positive angular velocity for left turn
+        right_cost, right_trajectory = self.evaluate_trajectory(0.0, -self.w_max)  # Negative angular velocity for right turn
+        left_cost, left_trajectory = self.evaluate_trajectory(0.0, self.w_max)    # Positive angular velocity for left turn
 
         if right_cost < left_cost and right_cost != float('inf'):
             self.get_logger().info("Rotating to the right.")
-            return (0.0, -self.w_max)  # Rotate right
+            return (0.0, -self.w_max), right_trajectory  # Rotate right
         elif left_cost != float('inf'):
             self.get_logger().info("Rotating to the left.")
-            return (0.0, self.w_max)   # Rotate left
+            return (0.0, self.w_max), left_trajectory   # Rotate left
         else:
             self.get_logger().warn("No safe rotation found.")
-            return None
+            return None, None
 
     # -------------------- Trajectory Evaluation --------------------
     def evaluate_trajectory(self, v, w):
         if self.current_pose is None:
-            return float('inf')
+            return float('inf'), None
         x = self.current_pose.position.x
         y = self.current_pose.position.y
         yaw = self.get_yaw_from_pose(self.current_pose)
         total_cost = 0.0
         steps = int(self.horizon / self.dt)
         min_cell_cost = 100
+        trajectory = []
         for step in range(steps):
             x += v * math.cos(yaw) * self.dt
             y += v * math.sin(yaw) * self.dt
@@ -186,7 +198,7 @@ class LocalPlannerControllerNode(Node):
             if cell_cost >= self.obstacle_threshold:
                 ttc = step * self.dt
                 if ttc < self.emergency_ttc:
-                    return float('inf')
+                    return float('inf'), None
                 penalty = (self.horizon - ttc) * self.penalty_factor
                 total_cost += penalty
             else:
@@ -194,8 +206,34 @@ class LocalPlannerControllerNode(Node):
             path_error = self.distance_to_global_path(x, y)
             total_cost += self.path_weight * path_error
             total_cost -= self.forward_reward * v
+            
+            # Store the trajectory for visualization.
+            pose = Pose()
+            pose.position.x = x
+            pose.position.y = y
+            pose.position.z = 0.0
+            quat = self.get_quaternion_from_yaw(yaw)
+            pose.orientation = Quaternion(x=quat[0], y=quat[1], z=quat[2], w=quat[3])
+            trajectory.append(pose)
+        
         total_cost += self.clearance_penalty_weight * min_cell_cost
-        return total_cost
+        return total_cost, trajectory
+
+    # -------------------- Publish Local Path --------------------
+    def publish_local_path(self, trajectory):
+        """Publish the local path for visualization in Rviz2."""
+        path_msg = Path()
+        path_msg.header.stamp = self.get_clock().now().to_msg()
+        path_msg.header.frame_id = "map"  # Assuming the map frame is used.
+        
+        for pose in trajectory:
+            pose_stamped = PoseStamped()
+            pose_stamped.header.stamp = path_msg.header.stamp
+            pose_stamped.header.frame_id = path_msg.header.frame_id
+            pose_stamped.pose = pose
+            path_msg.poses.append(pose_stamped)
+        
+        self.local_path_pub.publish(path_msg)
 
     # -------------------- Global Path Update --------------------
     def update_global_path_with_local_costmap(self):
@@ -260,6 +298,10 @@ class LocalPlannerControllerNode(Node):
         return x, y
 
     # -------------------- Helper Functions --------------------
+    def get_quaternion_from_yaw(self, yaw):
+        """Convert a yaw angle to a Quaternion."""
+        return (0.0, 0.0, math.sin(yaw / 2.0), math.cos(yaw / 2.0))
+
     def get_cost_at_position(self, x, y):
         if self.local_costmap is None:
             return 0
@@ -328,7 +370,7 @@ class LocalPlannerControllerNode(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = LocalPlannerControllerNode()
+    node = SBMPOControllerNode()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()

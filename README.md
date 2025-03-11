@@ -1,5 +1,8 @@
 # FRA532_EXAM1: Path Planning and Navigation
 
+
+## Demo
+[![Watch the video](https://raw.githubusercontent.com/yourusername/yourrepository/main/assets/thumbnail.jpg)](https://raw.githubusercontent.com/[itsnotthetim/FRA532_EXAM1/video/demo.mp4)
 ## Introduction
 This is the first examination for **FRA532 Mobile Robotics**, where I have the flexibility to choose my project. My chosen project focuses on developing autonomous navigation for a **differential drive mir_robot** which can avoid the local static obstacle in a warehouse environment.
 

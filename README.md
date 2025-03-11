@@ -1,7 +1,7 @@
 # FRA532_EXAM1: Path Planning and Navigation
 
 ## Introduction
-This is the first examination for **FRA532 Mobile Robotics**, where I have the flexibility to choose my project. My chosen project focuses on developing autonomous navigation for a **differential drive mir_robot** in a warehouse environment.
+This is the first examination for **FRA532 Mobile Robotics**, where I have the flexibility to choose my project. My chosen project focuses on developing autonomous navigation for a **differential drive mir_robot** which can avoid the local static obstacle in a warehouse environment.
 
 ## Packages Usage
 
@@ -24,6 +24,7 @@ This is the first examination for **FRA532 Mobile Robotics**, where I have the f
 2. [Installation](#installation)
 3. [Usage](#usage)
 4. [Features](#features)
+5. [Contributor](#contributor)
 
 ---
 
@@ -359,10 +360,10 @@ $$
     \theta_{t+1} = \theta_t + w \cdot dt
 $$
 where:
-- \( x_t, y_t, \theta_t \) → Current robot position and heading angle.
-- \( v \) → Linear velocity (m/s).
-- \( w \) → Angular velocity (rad/s).
-- \( dt \) → Simulation time step.
+-  $x_t, y_t, \theta_t$  → Current robot position and heading angle.
+-  $v$  → Linear velocity (m/s).
+-  $w$  → Angular velocity (rad/s).
+-  $dt$  → Simulation time step.
 
 Each trajectory is evaluated over a **horizon time (`horizon`)** to determine its feasibility and cost.
 
@@ -432,9 +433,8 @@ If a trajectory results in a predicted collision within **emergency time-to-coll
 ---
 
 
-## Contributors
+## Contributor
 
 
-2. **Karanyaphas Chitsuebsai** (65340500065)
+ **Karanyaphas Chitsuebsai** (65340500065)
 
-<p align="right">(<a href="#fra532-exam1">back to top</a>)</p>

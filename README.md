@@ -1,7 +1,7 @@
 # FRA532_EXAM1: Path Planning and Navigation
 
 
-## Demo
+## Demo (Click on the picture to watch)
 [![Watch the video](https://img.youtube.com/vi/PwrDWScAZx4/maxresdefault.jpg)](https://youtu.be/PwrDWScAZx4)
 
 

@@ -2,7 +2,8 @@
 
 
 ## Demo
-[![Watch the video](images/clickpoint.jpg)](https://youtu.be/PwrDWScAZx4)
+[![Watch the video](https://img.youtube.com/vi/PwrDWScAZx4/maxresdefault.jpg)](https://youtu.be/PwrDWScAZx4)
+
 
 
 ## Introduction

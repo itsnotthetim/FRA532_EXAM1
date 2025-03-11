@@ -2,7 +2,7 @@
 
 
 ## Demo
-[![Watch the video](https://raw.githubusercontent.com/itsnotthetim/FRA532_EXAM1/main/images/clickpoint.jpg)](https://raw.githubusercontent.com/[itsnotthetim/FRA532_EXAM1/main/media/demo.webm)
+[![Watch the video](https://raw.githubusercontent.com/itsnotthetim/FRA532_EXAM1/main/images/clickpoint.jpg)](https://raw.githubusercontent.com/[itsnotthetim/FRA532_EXAM1/main/media/demo.mp4)
 
 
 ## Introduction

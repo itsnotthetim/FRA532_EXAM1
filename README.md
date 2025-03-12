@@ -59,6 +59,8 @@ sudo apt install ros-humble-ros2-controllers
 sudo apt install ros-humble-gazebo-ros2-control
 sudo apt install ros-humble-nav2*
 sudo apt install ros-humble-navigation2
+sudo apt install gazebo
+echo "source /usr/share/gazebo/setup.bash" >> ~/.bashrc
 ```
 
 ### Clone Workspace

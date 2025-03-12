@@ -73,19 +73,29 @@ Follow the commands below to download and install the package:
 
     ```bash
     git clone https://github.com/itsnotthetim/FRA532_EXAM1.git
-    cd FRA532_EXAM1
+    cd ~/FRA532_EXAM1
     ```
 
 3. Ensure all required package dependencies (MIR Robot) are installed:
 
     ```bash
+    git clone -b humble-devel https://github.com/relffok/mir_robot src/mir_robot
+    vcs import < src/mir_robot/ros2.repos src --recursive
+    
     sudo apt update
     sudo apt install -y python3-rosdep
     rosdep update --rosdistro=humble
     rosdep install --from-paths src --ignore-src -r -y --rosdistro humble
-    ```
+     ```
+4. Download and Build the Warehouse World
+   ```bash
+   git clone https://github.com/aws-robotics/aws-robomaker-small-warehouse-world.git -b ros2
+   
+   cd ~/FRA532_EXAM1
+   rosdep install --from-paths . --ignore-src -r -y
+   ```
 
-4. Build and source the packages:
+6. Build and source the packages:
 
     ```bash
     colcon build

@@ -11,7 +11,7 @@ def generate_launch_description():
     nav2_dir = get_package_share_directory('nav2_bringup')
     
     my_map_file = os.path.join(my_ws_dir, 'map', 'map.yaml')
-    params_file = os.path.join(my_ws_dir, 'config', 'test.yaml')
+    params_file = os.path.join(my_ws_dir, 'config', 'amcl_cfg.yaml')
     rviz_config_file = os.path.join(my_ws_dir, 'rviz', 'rviz_cfg.rviz')
     
     # Include the localization launch from nav2

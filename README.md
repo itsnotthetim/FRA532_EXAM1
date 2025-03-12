@@ -57,6 +57,8 @@ sudo apt install ros-humble-robot-state-publisher
 sudo apt install ros-humble-ros2-control
 sudo apt install ros-humble-ros2-controllers
 sudo apt install ros-humble-gazebo-ros2-control
+sudo apt install ros-humble-nav2*
+sudo apt install ros-humble-navigation2
 ```
 
 ### Clone Workspace

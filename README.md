@@ -125,7 +125,7 @@ Follow the commands below to download and install the package:
     1.3 For saving the map, Launch the **save_map.launch.py** and then rename both of map file to map.pgm and map.yaml and move them to the **dd_controller/map** path <mark>(You can skip this because I already do it for you)</mark>
 
     ```bash
-    ros2 launch dd_controller save_map.launch.py
+    ros2 launch fra532_slam save_map.launch.py
     ```
 2. Launch the **Localization and CostMap**:
 

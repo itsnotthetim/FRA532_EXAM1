@@ -219,7 +219,7 @@ Obstacles are inflated using **binary dilation** with a circular structuring ele
 ---
 
 ## Local Costmap Node
-
+![Local CostMap](images/LocalCostMap.png)
 ### Overview
 The **Local Costmap Node** is a ROS2 implementation similar to the **Global Costmap Node** but operates in **real-time** based on **LiDAR sensor data** instead of a static map. This allows the robot to dynamically detect and avoid obstacles that are not present in the global costmap.
 

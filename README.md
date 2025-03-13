@@ -179,13 +179,15 @@ where:
 -  $resolution$  is the grid resolution (meters per cell)
 
 Each grid cell is classified as:
-    $\text{Cost} =
+
+$$ \text{Cost} =
     \begin{cases}
         100, & \text{if occupied (obstacle)} - Black\\
         0, & \text{if free space} - Yellow \\
         50, & \text{if unknown} - Orange
-    \end{cases}$
-    ![Publish Point](images/global_costmap.png)
+\end{cases} $$
+    
+![Publish Point](images/global_costmap.png)
 
 ---
 
@@ -195,7 +197,8 @@ Since a robot cannot navigate safely near walls or obstacles, the costmap inflat
 
 #### **Inflation Calculation**
 The inflation radius is computed as:
-   $ R_{inflation} = \frac{robot\_radius + safety\_margin}{resolution} \times inflation\_factor$
+
+   $$ R_{inflation} = \frac{robot\_radius + safety\_margin}{resolution} \times inflation\_factor $$
 
 where:
 -  $R_{inflation}$  is the inflation radius in grid cells
@@ -375,12 +378,15 @@ The planner **samples multiple linear (`v`) and angular (`w`) velocities** and p
 $$
     x_{t+1} = x_t + v \cos(\theta_t) \cdot dt
 $$
+
 $$
     y_{t+1} = y_t + v \sin(\theta_t) \cdot dt
 $$
+
 $$
     \theta_{t+1} = \theta_t + w \cdot dt
 $$
+
 where:
 -  $x_t, y_t, \theta_t$  → Current robot position and heading angle.
 -  $v$  → Linear velocity (m/s).
@@ -391,9 +397,11 @@ Each trajectory is evaluated over a **horizon time (`horizon`)** to determine it
 
 #### **2. SBMPO Cost Function for Trajectory Selection**
 Each trajectory candidate is evaluated using the **SBMPO cost function**:
+
 $$
     C_{total} = C_{obs} + C_{path} - R_{forward} + C_{clearance}
 $$
+
 where:
 -  $C_{obs} = W_{obs} \times \frac{cost(x, y)}{100}$  → **Obstacle proximity penalty**: Increases cost for paths close to obstacles.
 -  $C_{path} = W_{path} \times d_{path}(x, y)$  → **Path deviation penalty**: Penalizes deviation from the planned global path.

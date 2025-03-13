@@ -13,7 +13,7 @@ class GlobalPlannerNode(Node):
         super().__init__('global_planner_node')
         qos_profile = QoSProfile(depth=10)
         
-        # Subscribers for costmap, current robot pose, and clicked point goal
+    
         self.costmap_sub = self.create_subscription(
             OccupancyGrid, '/global_costmap', self.costmap_callback, qos_profile)
         self.start_sub = self.create_subscription(
@@ -21,10 +21,10 @@ class GlobalPlannerNode(Node):
         self.clicked_point_sub = self.create_subscription(
             PointStamped, '/clicked_point', self.clicked_point_callback, qos_profile)
         
-        # Publisher for the computed global path
+      
         self.path_pub = self.create_publisher(Path, '/global_path', qos_profile)
         
-        # Internal state variables
+      
         self.costmap = None
         self.costmap_info = None
         self.start_pose = None
@@ -45,7 +45,7 @@ class GlobalPlannerNode(Node):
         self.try_planning()
 
     def clicked_point_callback(self, msg: PointStamped):
-        # Convert clicked point to a goal pose with default orientation
+      
         goal_pose = Pose()
         goal_pose.position = msg.point
         goal_pose.orientation = Quaternion(w=1.0, x=0.0, y=0.0, z=0.0)

@@ -17,14 +17,14 @@ class Costmap:
         with open(yaml_file, 'r') as file:
             map_data = yaml.safe_load(file)
 
-        # Load the PGM image
+     
         my_ws_dir = get_package_share_directory('dd_controller')
         pgm_path = os.path.join(my_ws_dir, 'map', 'map.pgm')
         pgm_image = Image.open(pgm_path)
         self.grid = np.array(pgm_image)
         self.grid = np.flipud(self.grid)
 
-        # Extract map metadata
+  
         self.resolution = map_data['resolution']
         self.origin_x = map_data['origin'][0]
         self.origin_y = map_data['origin'][1]
@@ -78,7 +78,7 @@ class CostmapNode(Node):
     def __init__(self):
         super().__init__('costmap_node')
 
-        # Get the path to the YAML file
+        
         my_ws_dir = get_package_share_directory('dd_controller')
         map_yaml_file = os.path.join(my_ws_dir, 'map', 'map.yaml')
 
@@ -88,26 +88,26 @@ class CostmapNode(Node):
         # Initialize costmap 
         self.costmap = Costmap(yaml_file, robot_radius=0.1, safety_margin=0.2)
 
-        # Define QoS profiles
+    
         qos_map= QoSProfile(
             reliability=QoSReliabilityPolicy.RELIABLE,
             durability=QoSDurabilityPolicy.TRANSIENT_LOCAL,
             depth=10)
 
 
-        # Publishers and Subscribers
+       
         self.costmap_pub = self.create_publisher(OccupancyGrid, '/global_costmap', qos_map)
         self.pose_sub = self.create_subscription(PoseWithCovarianceStamped, '/amcl_pose', self.pose_callback, 10)
 
-        # Timer to publish costmap periodically
+        
         self.timer = self.create_timer(1.0, self.publish_costmap)
 
     def pose_callback(self, msg):
-        # Update robot pose
+        
         self.robot_pose = msg.pose.pose
 
     def publish_costmap(self):
-        # Publish costmap as an OccupancyGrid message
+        
         costmap_msg = OccupancyGrid()
         costmap_msg.header.stamp = self.get_clock().now().to_msg()
         costmap_msg.header.frame_id = 'map'
@@ -117,7 +117,7 @@ class CostmapNode(Node):
         costmap_msg.info.origin.position.x = self.costmap.origin_x
         costmap_msg.info.origin.position.y = self.costmap.origin_y
 
-        # Convert grid values to int8 without overflow (obstacles now correctly 100)
+        
         costmap_data = self.costmap.grid.astype(np.int8).flatten().tolist()
         costmap_msg.data = costmap_data
 

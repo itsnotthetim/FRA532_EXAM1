@@ -45,7 +45,7 @@ class LocalCostmapNode(Node):
         self.costmap_topic = self.get_parameter('costmap_topic').value
         self.publish_rate = self.get_parameter('publish_rate').value
 
-        # --- Derived Parameters ---
+      
         self.grid_size = int(self.local_size / self.resolution)  # Number of cells
 
         # --- Internal Storage ---
@@ -55,7 +55,7 @@ class LocalCostmapNode(Node):
         # --- TF Broadcaster ---
         self.tf_broadcaster = tf2_ros.TransformBroadcaster(self)
 
-        # --- QoS Profiles ---
+   
         qos_profile = QoSProfile(depth=10)
 
         qos_scan = QoSProfile(
@@ -63,18 +63,18 @@ class LocalCostmapNode(Node):
             durability=QoSDurabilityPolicy.VOLATILE,
             depth=10)
 
-        # --- Subscribers ---
+      
         self.laser_sub = self.create_subscription(
             LaserScan, self.scan_topic, self.scan_callback, qos_scan)
 
         self.pose_sub = self.create_subscription(
             PoseWithCovarianceStamped, self.pose_topic, self.pose_callback, qos_profile)
 
-        # --- Publisher for local costmap ---
+      
         self.costmap_pub = self.create_publisher(
             OccupancyGrid, self.costmap_topic, qos_profile)
 
-        # --- Timer to publish costmap at fixed rate ---
+
         self.timer = self.create_timer(1.0 / self.publish_rate, self.publish_local_map)
 
         self.get_logger().info(f"✅ LocalCostmapNode started. Publishing on {self.costmap_topic} in {self.costmap_frame_id} frame.")
@@ -111,19 +111,19 @@ class LocalCostmapNode(Node):
                 angle += scan.angle_increment
                 continue
 
-            # ✅ Convert LiDAR hit to **global map frame**
+            # Convert LiDAR hit to **global map frame**
             obs_x = robot_x + r * math.cos(angle + robot_yaw)
             obs_y = robot_y + r * math.sin(angle + robot_yaw)
             angle += scan.angle_increment
 
-            # ✅ Convert global coordinates to costmap indices
+            # Convert global coordinates to costmap indices
             cx, cy = self.world_to_grid(obs_x, obs_y, robot_x, robot_y)
 
-            # ✅ Mark obstacle if within bounds
+            # Mark obstacle if within bounds
             if 0 <= cx < self.grid_size and 0 <= cy < self.grid_size:
                 self.local_grid[cy, cx] = 100  # Obstacle
 
-        # ✅ Apply inflation
+        # Apply inflation
         self.apply_inflation()
 
     # ---------------- Inflation Processing ----------------
@@ -157,11 +157,11 @@ class LocalCostmapNode(Node):
         occ_grid.info.height = self.grid_size
         occ_grid.info.origin.orientation.w = 1.0  # No rotation
 
-        # ✅ Costmap always centers on the robot
+        #  Costmap always centers on the robot
         occ_grid.info.origin.position.x = self.robot_pose[0] - (self.local_size / 2.0)
         occ_grid.info.origin.position.y = self.robot_pose[1] - (self.local_size / 2.0)
 
-        # ✅ Flatten data for ROS message
+        # Flatten data for ROS message
         occ_grid.data = self.local_grid.flatten().tolist()
 
         self.costmap_pub.publish(occ_grid)

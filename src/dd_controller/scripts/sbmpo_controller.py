@@ -49,18 +49,18 @@ class SBMPOControllerNode(Node):
         self.path_update_threshold = self.get_parameter('path_update_threshold').value
         self.path_update_delta = self.get_parameter('path_update_delta').value
         
-        # Subscribers for AMCL pose, global path, and local costmap.
+        
         self.pose_sub = self.create_subscription(PoseWithCovarianceStamped, "/amcl_pose", self.pose_callback, qos)
         self.global_path_sub = self.create_subscription(Path, "/global_path", self.global_path_callback, qos)
         self.costmap_sub = self.create_subscription(OccupancyGrid, "/local_costmap", self.costmap_callback, qos)
         
-        # Publisher for velocity commands.
+  
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", qos)
         
-        # Publisher for local path visualization.
+       
         self.local_path_pub = self.create_publisher(Path, "/local_path", qos)
         
-        # Control loop timer at 10 Hz.
+        
         self.timer = self.create_timer(0.1, self.control_loop)
         
         # Internal state
@@ -297,7 +297,7 @@ class SBMPOControllerNode(Node):
         y = gy * res + origin_y + res / 2.0
         return x, y
 
-    # -------------------- Helper Functions --------------------
+    # -------------------- Math Functions --------------------
     def get_quaternion_from_yaw(self, yaw):
         """Convert a yaw angle to a Quaternion."""
         return (0.0, 0.0, math.sin(yaw / 2.0), math.cos(yaw / 2.0))

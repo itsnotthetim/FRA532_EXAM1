@@ -43,7 +43,7 @@ This is the first examination for **FRA532 Mobile Robotics**, where I have the f
 Install the required Python dependencies:
 
 ```bash
-pip install rclpy geometry-msgs nav-msgs sensor-msgs numpy scipy pillow pyyaml tf-transformations ament-index-python
+pip install geometry-msgs nav-msgs sensor-msgs numpy scipy pillow pyyaml tf-transformations ament-index-python
 ```
 
 ### ROS2 Packages
